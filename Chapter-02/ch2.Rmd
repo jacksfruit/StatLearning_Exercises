@@ -1,0 +1,38 @@
+---
+title: "Statistical Learning - Chapter 2 (Applied Exercises)"
+output: html_document
+---
+
+```{r loadData}
+college = read.csv("data/College.csv", header=T, na.strings="?")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
