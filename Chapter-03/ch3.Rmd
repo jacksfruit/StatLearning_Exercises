@@ -1,0 +1,300 @@
+---
+title: "Statistical Learning - Chapter 3 (Practical Exercises)"
+output: html_document
+---
+
+
+```{r data}
+Auto = read.csv("data/Auto.data", header=T, na.strings="?")
+
+```
+
+```{r 8a}
+lm.1 = lm(mpg~horsepower, data=Auto)
+summary(lm.1)
+
+## Calculate predicted mpg for horsepower = 98
+coefficients(lm.1)[1] + coefficients(lm.1)[2]*98
+
+## 95% confidence interval for coefficient
+confint(lm.1)
+
+## 95% conficence and prediction intervals
+predict(lm.1, data.frame(horsepower=(c(98))), interval="confidence")
+predict(lm.1, data.frame(horsepower=(c(98))), interval="prediction")
+
+```
+
+
+```{r 8b}
+attach(Auto)
+plot(mpg,horsepower)
+abline(lm.1)
+
+```
+
+
+```{r 8c}
+par(mfrow=c(2,2))
+plot(lm.1)
+plot(predict(lm.1), residuals(lm.1))
+plot(predict(lm.1), rstudent(lm.1))
+plot(hatvalues(lm.1))
+
+```
+
+
+```{r 9a}
+plot(Auto)
+
+```
+
+
+```{r 9b}
+Auto2 = Auto[, -9]  ## remove categorical "names" variable
+cor(Auto2)
+
+```
+
+
+```{r 9c}
+lm.2 = lm(mpg~., data=Auto2)
+summary(lm.2)
+```
+
+
+```{r 9d}
+plot(lm.2)
+
+```
+
+
+```{r 9e}
+lm.3=lm(mpg~year*horsepower+horsepower:weight,data=Carseats)
+summary(lm.3)
+
+```
+
+
+```{r 9f}
+lm.4 = lm(mpg~horsepower+I(horsepower^2), data=Auto)
+summary(lm.4)
+
+lm.5 = lm(mpg~log(mpg), data=Auto)
+summary(lm.5)
+
+
+```
+
+
+```{r 10a}
+lm.6 = lm(Sales~Price+Urban+US, data=Carseats)
+summary(lm.6)
+
+```
+
+
+```{r 10e}
+lm.7 = lm(Sales~Price+US, data=Carseats)
+summary(lm.7)
+
+```
+
+
+```{r 10f}
+
+
+```
+
+
+```{r 10g}
+confint(lm.7)
+
+```
+
+
+```{r 10h}
+
+par(mfrow=c(2,2))
+plot(lm.7)
+
+```
+
+
+```{r 11a}
+
+## Create sample (n=100) of a linear regression of y on x
+set.seed(1)
+x = rnorm(100)
+y = 2*x+rnorm(100)  
+
+lm.8 = lm(y~x+0)
+summary(lm.8)
+
+```
+
+
+```{r 11b}
+lm.9 = lm(x~y+0)
+summary(lm.9)
+
+```
+
+
+```{r 11f}
+lm.10 = lm(y~x)
+summary(lm.10)
+
+lm.11 = lm(x~y)
+summary(lm.11)
+```
+
+
+```{r 13abc}
+## Create sample (n=100) of a linear regression of y on x
+set.seed(1)
+x   = rnorm(100)
+eps = rnorm(100, mean=0, sd=sqrt(0.25))
+y   = -1 + 0.5*x + eps   ## y = beta_0 + beta_1*x + epsilon
+
+length(y)
+
+```
+
+
+```{r 13d}
+plot(x, y)
+
+
+```
+
+
+```{r 13e}
+lm.12 = lm(y~x)
+summary(lm.12)
+
+```
+
+
+```{r 13f}
+par(mfrow=c(1,1))
+plot(x, y)
+abline(lm.12, col="red")               ## least squares line
+abline(x, -1 + 0.5*x, col="blue")      ## population regression line
+
+```
+
+
+```{r 13g}
+lm.13 = lm(y~x+I(x^2))
+summary(lm.13)
+
+```
+
+
+```{r 13h}
+set.seed(1)
+x   = rnorm(100)
+eps = rnorm(100, mean=0, sd=sqrt(0.05))
+y   = -1 + 0.5*x + eps   ## y = beta_0 + beta_1*x + epsilon
+
+plot(x, y)
+
+lm.14 = lm(y~x)
+summary(lm.14)
+
+par(mfrow=c(1,1))
+plot(x, y)
+abline(lm.14, col="red")               ## least squares line
+abline(x, -1 + 0.5*x, col="blue")      ## population regression line
+
+
+```
+
+
+```{r 13i}
+set.seed(1)
+x   = rnorm(100)
+eps = rnorm(100, mean=0, sd=sqrt(0.5))
+y   = -1 + 0.5*x + eps   ## y = beta_0 + beta_1*x + epsilon
+
+plot(x, y)
+
+lm.15 = lm(y~x)
+summary(lm.15)
+
+par(mfrow=c(1,1))
+plot(x, y)
+abline(lm.15, col="red")               ## least squares line
+abline(x, -1 + 0.5*x, col="blue")      ## population regression line
+
+
+```
+
+
+```{r 13j}
+confint(lm.12)
+confint(lm.14)
+confint(lm.15)
+
+```
+
+
+```{r 14a}
+set.seed(1)
+x1 = runif(100)
+x2 = 0.5*x1 + rnorm(100)/10
+y  = 2 + 2*x1 + 0.3*x2 + rnorm(100)  ## y = beta_0 + beta_1*x_1 + beta_2*X_2 + epsilon
+
+```
+
+
+```{r 14b}
+plot(x1, x2)
+
+```
+
+
+```{r 14c}
+lm.16 = lm(y~x1+x2)
+summary(lm.16)
+```
+
+
+```{r 14d}
+lm.17 = lm(y~x1)
+summary(lm.17)
+```
+
+
+```{r 14e}
+lm.18 = lm(y~x2)
+summary(lm.18)
+```
+
+
+```{r 14g}
+x1 = c(x1, 0.1)
+x2 = c(x2, 0.8)
+y  = c(y, 6)
+
+lm.19 = lm(y~x1+x2)
+summary(lm.19)
+
+lm.20 = lm(y~x1)
+summary(lm.20)
+
+lm.21 = lm(y~x2)
+summary(lm.21)
+
+```
+
+
+```{r 15b}
+lm.22 = lm(crim~., data=Boston)
+summary(lm.22)
+
+```
+
+
+

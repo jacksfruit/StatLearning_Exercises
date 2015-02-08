@@ -1,0 +1,276 @@
+---
+title: "Statistical Learning - Chapter 3 (Lab)"
+output: html_document
+---
+
+# Chapter 3 Lab: Linear Regression
+
+library(MASS)
+library(ISLR)
+
+# Simple Linear Regression
+
+fix(Boston)
+names(Boston)
+
+lm.fit=lm(medv~lstat,data=Boston)
+
+attach(Boston)
+lm.fit=lm(medv~lstat)
+
+lm.fit
+
+summary(lm.fit)
+
+names(lm.fit)
+coef(lm.fit)
+confint(lm.fit)
+
+predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval="confidence")
+predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval="prediction")
+
+plot(lstat,medv)
+abline(lm.fit)
+
+abline(lm.fit,lwd=3)
+abline(lm.fit,lwd=3,col="red")
+
+plot(lstat,medv,col="red")
+plot(lstat,medv,pch=20)
+plot(lstat,medv,pch="+")
+plot(1:20,1:20,pch=1:20)
+
+par(mfrow=c(2,2))
+plot(lm.fit)
+
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+
+
+# Multiple Linear Regression
+
+lm.fit=lm(medv~lstat+age,data=Boston)
+summary(lm.fit)
+
+lm.fit=lm(medv~.,data=Boston)
+summary(lm.fit)
+
+lm.fit1=lm(medv~.-age,data=Boston)
+summary(lm.fit1)
+
+lm.fit1=update(lm.fit, ~.-age)
+
+
+# Interaction Terms
+
+summary(lm(medv~lstat*age,data=Boston))
+
+
+# Non-linear Transformations of the Predictors
+
+lm.fit2=lm(medv~lstat+I(lstat^2))
+summary(lm.fit2)
+
+lm.fit=lm(medv~lstat)
+anova(lm.fit,lm.fit2)
+
+par(mfrow=c(2,2))
+plot(lm.fit2)
+
+lm.fit5=lm(medv~poly(lstat,5))
+summary(lm.fit5)
+
+summary(lm(medv~log(rm),data=Boston))
+
+
+# Qualitative Predictors
+
+fix(Carseats)
+
+names(Carseats)
+
+lm.fit=lm(Sales~.+Income:Advertising+Price:Age,data=Carseats)
+summary(lm.fit)
+
+attach(Carseats)
+contrasts(ShelveLoc)
+
+
+# Writing Functions
+
+LoadLibraries
+LoadLibraries()
+LoadLibraries=function(){
+ library(ISLR)
+ library(MASS)
+ print("The libraries have been loaded.")
+ }
+LoadLibraries
+LoadLibraries()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r 8b}
+rownames(college) = college [,1]  ## use first column as row names
+fix(college)
+
+college = college[,-1]  ## eliminate first column
+fix(college)
+
+```
+
+```{r 8c}
+summary(college)
+pairs(college[,1:10])
+
+plot(college$Private, college$Outstate)
+
+Elite = rep("No", nrow(college))
+Elite[college$Top10perc > 50] = "Yes"
+Elite = as.factor(Elite)
+college = data.frame(college, Elite)
+summary(college)
+plot(college$Elite, college$Outstate)
+
+par(mfrow=c(2,2))
+hist(college$Enroll, col=2, breaks=10)
+hist(college$Personal, col=2, breaks=10)
+hist(college$Expend, col=2, breaks=10)
+hist(college$Grad.Rate, col=2, breaks=10)
+
+
+```
+
+
+```{r 9a}
+auto = read.csv("data/Auto.csv", header=T, na.strings="?")
+summary(auto)
+
+# Quantitative predictors: mpg, displacement, horsepower, weight, acceleration.
+# Qualitative predictors: cylinders, year, origin, name.
+
+```
+
+```{r 9b}
+range(auto[, "mpg"])
+range(auto[, "displacement"])
+range(auto[, "horsepower"], na.rm=TRUE)
+range(auto[, "weight"])
+range(auto[, "acceleration"])
+
+# Same result but using lapply:
+quantPredictors = c("mpg", "displacement", "horsepower", "weight", "acceleration")
+lapply(auto[, quantPredictors], range, na.rm=TRUE)
+
+
+```
+
+```{r 9c}
+lapply(auto[, quantPredictors], mean, na.rm=TRUE)
+lapply(auto[, quantPredictors], sd, na.rm=TRUE)
+
+```
+
+```{r 9d}
+autoSubset = auto[-(10:85), ]
+lapply(autoSubset[, quantPredictors], range, na.rm=TRUE)
+lapply(autoSubset[, quantPredictors], mean, na.rm=TRUE)
+lapply(autoSubset[, quantPredictors], sd, na.rm=TRUE)
+
+```
+
+
+```{r 9e-9f}
+pairs(auto)
+
+auto$cylinders = as.factor(auto$cylinders)
+auto$year      = as.factor(auto$year)
+auto$origin    = as.factor(auto$origin)
+
+par(mfrow=c(1,3))
+plot(auto$cylinders, auto$mpg)
+plot(auto$year, auto$mpg)
+plot(auto$origin, auto$mpg)
+
+```
+
+
+```{r 10a}
+library (MASS)
+#fix(Boston)
+?Boston
+dim(Boston)
+
+```
+
+
+```{r 10b}
+pairs(Boston)
+pairs(~ crim + nox + rm + age + dis + black + lstat + medv , data = Boston)
+
+```
+
+
+```{r 10d}
+predictors = c("zn", "indus", "nox", "rm", "age", "dis", "rad", "tax", "ptratio", "black", "lstat", "medv")
+lapply(Boston[, predictors], range, na.rm=TRUE)
+lapply(Boston[, predictors], mean, na.rm=TRUE)
+
+
+```
+
+
+```{r 10e}
+nrow(Boston[Boston$chas == 1,])
+
+```
+
+
+```{r 10f}
+median(Boston$ptratio)
+
+```
+
+
+```{r 10g}
+min(Boston$medv)
+Boston[Boston$medv == min(Boston$medv), ]
+
+```
+
+
+```{r 10h}
+nrow(Boston[Boston$rm > 7, ])
+nrow(Boston[Boston$rm > 8, ])
+Boston[Boston$rm > 8, ]
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
